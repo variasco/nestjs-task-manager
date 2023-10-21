@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task, TaskStatus } from './task.model';
+import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -9,6 +10,24 @@ export class TasksService {
 
   async getAllTasks(): Promise<Task[]> {
     return this.tasks;
+  }
+
+  async getFilteredTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
+    const { search, status } = filterDto;
+
+    let tasks = await this.getAllTasks();
+
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status);
+    }
+
+    if (search) {
+      tasks = tasks.filter(
+        (task) => task.title.includes(search) || task.description.includes(search),
+      );
+    }
+
+    return tasks;
   }
 
   async getTaskById(id: string): Promise<Task | undefined> {
