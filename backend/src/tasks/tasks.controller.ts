@@ -21,7 +21,7 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  async getTasks(@Query() filterDto: GetTaskFilterDto): Promise<Task[]> {
+  async getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Promise<Task[]> {
     if (Object.keys(filterDto)) {
       return this.tasksService.getFilteredTasks(filterDto);
     }
