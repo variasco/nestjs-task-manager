@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -12,7 +10,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { HttpSuccessResponse } from 'src/interfaces/response';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { Task } from './task.model';
@@ -33,13 +30,7 @@ export class TasksController {
 
   @Get(':id')
   async getOneTask(@Param('id') id: string): Promise<Task> {
-    const task = await this.tasksService.getTaskById(id);
-
-    if (!task) {
-      throw new HttpException('Задача не найдена', HttpStatus.NOT_FOUND);
-    }
-
-    return task;
+    return this.tasksService.getTaskById(id);
   }
 
   @Post()
@@ -49,15 +40,9 @@ export class TasksController {
   }
 
   @Delete(':id')
-  async deleteTask(@Param('id') id: string): Promise<HttpSuccessResponse> {
+  async deleteTask(@Param('id') id: string): Promise<void> {
     const task = await this.tasksService.getTaskById(id);
-
-    if (!task) {
-      throw new HttpException('Задача не найдена', HttpStatus.NOT_FOUND);
-    }
-
-    this.tasksService.deleteTask(id);
-    return { message: 'Задача успешно удалена', statusCode: HttpStatus.OK };
+    this.tasksService.deleteTask(task.id);
   }
 
   @Patch(':id/status')
@@ -65,12 +50,6 @@ export class TasksController {
     @Param('id') id: string,
     @Body() patch: Pick<Task, 'status'>,
   ): Promise<Task> {
-    const task = await this.tasksService.updateTaskStatus(id, patch.status);
-
-    if (!task) {
-      throw new HttpException('Задача не найдена', HttpStatus.NOT_FOUND);
-    }
-
-    return task;
+    return this.tasksService.updateTaskStatus(id, patch.status);
   }
 }

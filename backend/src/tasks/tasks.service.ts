@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { Task, TaskStatus } from './task.model';
+import { TASK_NOT_FOUND } from './consts/response.consts';
 
 @Injectable()
 export class TasksService {
@@ -30,8 +31,14 @@ export class TasksService {
     return tasks;
   }
 
-  async getTaskById(id: string): Promise<Task | undefined> {
-    return this.tasks.find((task) => task.id === id);
+  async getTaskById(id: string): Promise<Task> {
+    const found = this.tasks.find((task) => task.id === id);
+
+    if (!found) {
+      throw new NotFoundException(TASK_NOT_FOUND(id));
+    }
+
+    return found;
   }
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
@@ -53,15 +60,9 @@ export class TasksService {
     this.tasks.filter((task) => task.id !== id);
   }
 
-  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task | undefined> {
+  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
     const newTask = await this.getTaskById(id);
-    if (!newTask) return;
-
     newTask.status = status;
-
-    // const taskKey = this.tasks.findIndex((task) => task.id === id);
-
-    // this.tasks[taskKey] = newTask;
 
     return newTask;
   }
