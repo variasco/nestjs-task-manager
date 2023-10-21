@@ -1,1 +1,2 @@
-export const TASK_NOT_FOUND = (id: string) => `Задача c id "${id}" не найдена`;
+export const TASK_NOT_FOUND = (id: string): string => `Задача c id "${id}" не найдена`;
+export const STATUS_IS_NOT_VALID = (value: string): string => `"${value}" - невалидный статус`;

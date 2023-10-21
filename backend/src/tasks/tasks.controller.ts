@@ -12,7 +12,8 @@ import {
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
-import { Task } from './task.model';
+import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+import { Task, TaskStatus } from './task.model';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
@@ -48,8 +49,8 @@ export class TasksController {
   @Patch(':id/status')
   async updateTaskStatus(
     @Param('id') id: string,
-    @Body() patch: Pick<Task, 'status'>,
+    @Body('status', TaskStatusValidationPipe) status: TaskStatus,
   ): Promise<Task> {
-    return this.tasksService.updateTaskStatus(id, patch.status);
+    return this.tasksService.updateTaskStatus(id, status);
   }
 }
