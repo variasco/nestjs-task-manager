@@ -39,8 +39,8 @@ export class TasksService {
 
     const task: Task = {
       id: randomUUID(),
-      title: title!,
-      description: description!,
+      title,
+      description,
       status: TaskStatus.OPEN,
     };
 

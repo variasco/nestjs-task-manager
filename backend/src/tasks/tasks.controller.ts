@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -10,12 +9,14 @@ import {
   Patch,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { HttpSuccessResponse } from 'src/interfaces/response';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { Task } from './task.model';
 import { TasksService } from './tasks.service';
-import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -42,11 +43,8 @@ export class TasksController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   async createPost(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    if (!createTaskDto.title || !createTaskDto.description) {
-      throw new BadRequestException();
-    }
-
     return this.tasksService.createTask(createTaskDto);
   }
 
