@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -42,6 +43,10 @@ export class TasksController {
 
   @Post()
   async createPost(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    if (!createTaskDto.title || !createTaskDto.description) {
+      throw new BadRequestException();
+    }
+
     return this.tasksService.createTask(createTaskDto);
   }
 

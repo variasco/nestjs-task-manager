@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { Task, TaskStatus } from './task.model';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
+import { Task, TaskStatus } from './task.model';
 
 @Injectable()
 export class TasksService {
@@ -37,17 +37,10 @@ export class TasksService {
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
     const { title, description } = createTaskDto;
 
-    if (!title || !description) {
-      throw new HttpException(
-        'Отсутствуют необходимые параметры: title или description',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     const task: Task = {
       id: randomUUID(),
-      title,
-      description,
+      title: title!,
+      description: description!,
       status: TaskStatus.OPEN,
     };
 
