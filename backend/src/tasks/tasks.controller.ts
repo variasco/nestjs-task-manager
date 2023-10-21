@@ -1,7 +1,18 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { HttpSuccessResponse } from 'src/interfaces/response';
+import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './task.model';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto } from './dto/create-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -14,7 +25,7 @@ export class TasksController {
 
   @Get(':id')
   async getOneTask(@Param('id') id: string): Promise<Task> {
-    const task = await this.tasksService.getOneTask(id);
+    const task = await this.tasksService.getTaskById(id);
 
     if (!task) {
       throw new HttpException('Задача не найдена', HttpStatus.NOT_FOUND);
@@ -26,5 +37,31 @@ export class TasksController {
   @Post()
   async createPost(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(createTaskDto);
+  }
+
+  @Delete(':id')
+  async deleteTask(@Param('id') id: string): Promise<HttpSuccessResponse> {
+    const task = await this.tasksService.getTaskById(id);
+
+    if (!task) {
+      throw new HttpException('Задача не найдена', HttpStatus.NOT_FOUND);
+    }
+
+    this.tasksService.deleteTask(id);
+    return { message: 'Задача успешно удалена', statusCode: HttpStatus.OK };
+  }
+
+  @Patch(':id/status')
+  async updateTaskStatus(
+    @Param('id') id: string,
+    @Body() patch: Pick<Task, 'status'>,
+  ): Promise<Task> {
+    const task = await this.tasksService.updateTaskStatus(id, patch.status);
+
+    if (!task) {
+      throw new HttpException('Задача не найдена', HttpStatus.NOT_FOUND);
+    }
+
+    return task;
   }
 }
