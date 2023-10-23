@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
-import { Task } from './model/task.entity';
-import { TasksService } from './tasks.service';
-import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 import { TaskStatus } from './model/task-status.enum';
+import { Task } from './model/task.entity';
+import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
@@ -24,11 +24,7 @@ export class TasksController {
 
   @Get()
   async getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Promise<Task[]> {
-    if (Object.keys(filterDto)) {
-      // return this.tasksService.getFilteredTasks(filterDto);
-    }
-
-    return this.tasksService.getAllTasks();
+    return this.tasksService.getAllTasks(filterDto);
   }
 
   @Get(':id')
