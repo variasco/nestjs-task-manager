@@ -11,3 +11,5 @@ export const MAX_LENGTH = ({ property, constraints }: ValidationArguments) =>
 
 export const MIN_LENGTH = ({ property, constraints }: ValidationArguments) =>
   `Поле ${property} не может быть меньше ${constraints} символов`;
+
+export const USER_ALREADY_EXIST = 'Пользователь с данным username уже существует';

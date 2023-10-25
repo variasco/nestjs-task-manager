@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { USER_ALREADY_EXIST } from '../consts/validation.consts';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
 import { User } from './user.entity';
 
@@ -17,6 +18,14 @@ export class UserRepository extends Repository<User> {
       password,
     });
 
-    await user.save();
+    try {
+      await user.save();
+    } catch (error: any) {
+      if (error.code === '23505') {
+        throw new ConflictException(USER_ALREADY_EXIST);
+      }
+
+      throw new InternalServerErrorException('Server error');
+    }
   }
 }
