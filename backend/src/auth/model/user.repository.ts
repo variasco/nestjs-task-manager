@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { genSalt, hash } from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
 import { USER_ALREADY_EXIST } from '../consts/validation.consts';
 import { AuthCredentialsDto } from '../dto/auth-credential.dto';
 import { User } from './user.entity';
-import { genSalt, hash } from 'bcrypt';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -32,6 +32,17 @@ export class UserRepository extends Repository<User> {
 
       throw new InternalServerErrorException('Server error');
     }
+  }
+
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string | null> {
+    const { password, username } = authCredentialsDto;
+    const user = await this.findOneBy({ username });
+
+    if (user && (await user.validatePassword(password))) {
+      return user.username;
+    }
+
+    return null;
   }
 
   private async hashPassword(password: string, salt: string): Promise<string> {

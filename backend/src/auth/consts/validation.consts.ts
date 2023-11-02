@@ -13,3 +13,5 @@ export const MIN_LENGTH = ({ property, constraints }: ValidationArguments) =>
   `Поле ${property} не может быть меньше ${constraints} символов`;
 
 export const USER_ALREADY_EXIST = 'Пользователь с данным username уже существует';
+
+export const INVALID_CREDENTIALS = 'Направильный логин или пароль';
