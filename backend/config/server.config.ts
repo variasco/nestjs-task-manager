@@ -9,6 +9,10 @@ const serverConfig = () => ({
     password: process.env.DATABASE_PASSWORD ?? '123',
     synchronize: Boolean(process.env.DATABASE_SYNCRONIZE ?? true),
   },
+  jwt: {
+    secret: process.env.JWT_SECRET ?? '',
+    expiresIn: parseInt(process.env.JWT_EXPIRES_IN ?? '3600'),
+  },
 });
 
 export default serverConfig;
